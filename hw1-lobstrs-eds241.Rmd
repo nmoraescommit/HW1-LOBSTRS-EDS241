@@ -2,11 +2,10 @@
 title: "Assignment 1: California Spiny Lobster Abundance (*Panulirus Interruptus*)"
 subtitle: "Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County"
 author: "EDS 241"
-date: "1/8/2024 (Due 1/22)"
+date: "1/8/2024 (Due 1/26)"
 output: 
     html_document:
       theme: flatly
-    pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -295,24 +294,25 @@ Step 7: Building intuition - fixed effects
 
 **a.** Create  new `df` with the `year` variable converted to a factor
 
-**b.** Run the following OLS model using `lm()`
+**b.** Run the following negative binomial model using `glm.nb()`
 
-- Use the following specification for the outcome `log(counts+1)`
-- Estimate fixed effects for `year`
-- Include an interaction term between variables `treat` and `year`
+- Add fixed effects for `year` (i.e., dummy coefficients)
+- Include an interaction term between variables `treat` & `year` (`treat*year`)
 
 **c.** Take a look at the regression output. Each coefficient provides a comparison or the difference in means for a specific sub-group in the data. Informally, describe the what the model has estimated at a conceptual level (NOTE: you do not have to interpret coefficients individually)
 
 **d.** Explain why the main effect for treatment is negative? *Does this result make sense?
-
 
 ```{r}
 
 ff_counts <- spiny_counts %>% 
     mutate(year=as_factor(year))
     
-m5_fixedeffs <- lm(
-    log(counts+1) ~ treat*year,
+m5_fixedeffs <- glm.nb(
+    counts ~ 
+        treat +
+        year +
+        treat*year,
     data = ff_counts)
 
 summ(m5_fixedeffs, model.fit = FALSE)
@@ -324,12 +324,10 @@ summ(m5_fixedeffs, model.fit = FALSE)
 
 ```{r}
 
-# Hint 1: Group counts by `year` and `mpa` and calculate the `mean_count`
-# Hint 2: Convert variable `year` to a factor
-
 interact_plot(m5_fixedeffs, pred = year, modx = treat,
-              outcome.scale = "response")
+              outcome.scale = "link") # NOTE: y-axis on log-scale
 
+# HINT: Change `outcome.scale` to "response" to convert y-axis scale to counts
 ```
 
 **g.** Using `ggplot()` create a plot in same style as the previous `interaction plot`, but displaying the original scale of the outcome variable (lobster counts). This type of plot is commonly used to show how the treatment effect changes across discrete time points (i.e., panel data).
