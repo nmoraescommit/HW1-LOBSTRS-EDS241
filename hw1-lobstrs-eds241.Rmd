@@ -13,7 +13,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
+knitr::opts_chunk$set(eval=TRUE, warning = FALSE, message = FALSE )
 ```
 
 ------------------------------------------------------------------------
@@ -446,7 +446,7 @@ interact_plot(m5_fixedeffs, pred = year, modx = treat,
 
 The plot should have... - `year` on the x-axis - `counts` on the y-axis - `mpa` as the grouping variable
 
-```{r}
+```{r, echo=TRUE}
 # Hint 1: Group counts by `year` and `mpa` and calculate the `mean_count`
 # Hint 2: Convert variable `year` to a factor
 
